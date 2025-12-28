@@ -1,0 +1,5 @@
+{
+  "name": "Mood Music AI",
+  "description": "An AI-powered music recommendation app that suggests songs based on your current mood, the weather, and your personal music taste. It leverages the Gemini API to provide personalized playlists.",
+  "requestFramePermissions": []
+}
