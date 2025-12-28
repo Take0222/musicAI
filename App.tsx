@@ -29,8 +29,8 @@ const App: React.FC = () => {
   };
 
   const handleGenerateRecommendations = useCallback(async () => {
-    if (!mood || !weather) {
-      setError('気分と天気・場所を入力してください。');
+    if (!mood && !weather) {
+      setError('気分や天気を選択、または入力してください。');
       return;
     }
 
@@ -51,7 +51,6 @@ const App: React.FC = () => {
   }, [mood, weather, taste]);
 
   const handleFeedbackSubmit = () => {
-    // In a real application, you would send this data to a server.
     console.log('Feedback submitted:', {
       status: feedbackStatus,
       comment: feedbackComment,
@@ -62,68 +61,98 @@ const App: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-brand-dark text-white font-sans">
-      <main className="container mx-auto px-4 py-8 md:py-12">
-        <header className="text-center mb-10">
-          <div className="flex items-center justify-center gap-4">
-            <MusicIcon className="w-12 h-12 text-brand-green" />
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight bg-gradient-to-r from-green-400 to-teal-400 text-transparent bg-clip-text">
-              気分で音楽AI
+    <div className="min-h-screen bg-brand-dark text-white font-sans selection:bg-brand-green selection:text-black">
+      {/* Decorative Background Elements */}
+      <div className="fixed inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-brand-green/10 rounded-full blur-[120px]" />
+        <div className="absolute top-[20%] -right-[10%] w-[30%] h-[50%] bg-teal-500/5 rounded-full blur-[100px]" />
+      </div>
+
+      <main className="relative container mx-auto px-4 py-12 md:py-20 max-w-7xl">
+        <header className="text-center mb-16 animate-fade-in">
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="p-3 bg-brand-green/10 rounded-2xl">
+              <MusicIcon className="w-10 h-10 text-brand-green" />
+            </div>
+            <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-white via-green-400 to-emerald-400 text-transparent bg-clip-text">
+              Mood Music AI
             </h1>
           </div>
-          <p className="mt-4 text-lg text-brand-light-gray max-w-2xl mx-auto">
-            今のあなたのための完璧なサウンドトラックを見つけましょう。気分、天気、そしてあなたの音楽の好みを教えてください。
+          <p className="text-xl text-brand-light-gray max-w-2xl mx-auto leading-relaxed">
+            今のあなたの心と環境にシンクロする、究極の5曲をAIがキュレーション。
           </p>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16">
           {/* Left Column: Inputs */}
-          <div className="lg:col-span-4 space-y-8 p-6 bg-brand-light-dark rounded-xl shadow-lg h-fit">
-            <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-100">1. 今の気分は？</h2>
+          <div className="lg:col-span-4 space-y-10 p-8 bg-brand-light-dark/40 backdrop-blur-xl border border-white/5 rounded-2xl shadow-2xl h-fit sticky top-8">
+            <section>
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white/90">
+                <span className="w-6 h-6 flex items-center justify-center bg-brand-green text-black text-xs rounded-full">1</span>
+                今の気分は？
+              </h2>
               <MoodSelector selectedMood={mood} onSelectMood={setMood} />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-100">2. 天気・場所は？</h2>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white/90">
+                <span className="w-6 h-6 flex items-center justify-center bg-brand-green text-black text-xs rounded-full">2</span>
+                天気・場所は？
+              </h2>
               <WeatherSelector selectedWeather={weather} onSelectWeather={setWeather} />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-100">3. 好みを教えて</h2>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-bold mb-4 flex items-center gap-2 text-white/90">
+                <span className="w-6 h-6 flex items-center justify-center bg-brand-green text-black text-xs rounded-full">3</span>
+                好みを教えて（任意）
+              </h2>
               <TasteInput value={taste} onChange={setTaste} />
-            </div>
-            <div>
-              <h2 className="text-xl font-semibold mb-4 text-gray-100">4. (任意) 精度を高める</h2>
-              <SpotifyConnect />
-            </div>
+            </section>
+
             <button
               onClick={handleGenerateRecommendations}
-              disabled={isLoading || !mood || !weather}
-              className="w-full bg-brand-green text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-all duration-300 hover:bg-green-500 disabled:bg-brand-gray disabled:cursor-not-allowed transform hover:scale-105 disabled:transform-none"
+              disabled={isLoading || (!mood && !weather)}
+              className="group relative w-full overflow-hidden bg-brand-green text-black font-extrabold py-4 px-6 rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:bg-green-400 disabled:bg-brand-gray disabled:text-brand-light-gray disabled:cursor-not-allowed transform active:scale-95 shadow-xl shadow-brand-green/20"
             >
-              <SparklesIcon className="w-5 h-5" />
-              {isLoading ? 'あなたのための曲を探しています...' : 'おすすめを生成'}
+              <SparklesIcon className="w-5 h-5 transition-transform group-hover:rotate-12" />
+              <span>{isLoading ? 'セレクト中...' : 'おすすめを生成'}</span>
             </button>
-            {error && <p className="text-red-400 mt-4 text-center">{error}</p>}
+            
+            {error && (
+              <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm text-center animate-shake">
+                {error}
+              </div>
+            )}
           </div>
 
           {/* Right Column: Results */}
           <div className="lg:col-span-8">
-            <RecommendationList recommendations={recommendations} isLoading={isLoading} />
-            {!isLoading && recommendations.length > 0 && (
-              <Feedback
-                status={feedbackStatus}
-                comment={feedbackComment}
-                submitted={feedbackSubmitted}
-                onStatusChange={setFeedbackStatus}
-                onCommentChange={setFeedbackComment}
-                onSubmit={handleFeedbackSubmit}
-              />
-            )}
+            <div className="min-h-[600px]">
+              <RecommendationList recommendations={recommendations} isLoading={isLoading} />
+              
+              {!isLoading && recommendations.length > 0 && (
+                <Feedback
+                  status={feedbackStatus}
+                  comment={feedbackComment}
+                  submitted={feedbackSubmitted}
+                  onStatusChange={setFeedbackStatus}
+                  onCommentChange={setFeedbackComment}
+                  onSubmit={handleFeedbackSubmit}
+                />
+              )}
+            </div>
           </div>
         </div>
       </main>
-      <footer className="text-center py-6 text-brand-light-gray text-sm">
-        <p>Gemini API を利用しています。音楽への情熱を込めてデザインされました。</p>
+
+      <footer className="border-t border-white/5 py-10 text-brand-light-gray text-sm backdrop-blur-md">
+        <div className="container mx-auto px-4 text-center">
+          <p className="flex items-center justify-center gap-2 mb-2">
+            Built with <span className="text-brand-green">Gemini 3 Flash</span>
+          </p>
+          <p className="opacity-60">&copy; 2024 Mood Music AI. Discover your next favorite track.</p>
+        </div>
       </footer>
     </div>
   );

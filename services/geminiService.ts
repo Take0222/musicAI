@@ -41,7 +41,6 @@ const recommendationSchema = {
   required: ["recommendations"],
 };
 
-
 export const getMusicRecommendations = async (mood: string, weather: string, taste: string): Promise<Recommendation[]> => {
   const prompt = `
     以下の条件に基づいて、5曲おすすめの音楽を提案してください:
@@ -51,11 +50,12 @@ export const getMusicRecommendations = async (mood: string, weather: string, tas
 
     各曲について、曲名、アーティスト、アルバム、そして推薦理由を簡潔に教えてください。
     ユーザーが描写した瞬間にぴったり合う、一貫性のあるプレイリストを作成することに集中してください。
+    言語は日本語で回答してください。
     `;
 
   try {
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3-flash-preview",
       contents: prompt,
       config: {
         responseMimeType: "application/json",
